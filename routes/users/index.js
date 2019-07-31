@@ -12,10 +12,10 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    let query = "INSERT INTO `users` (`username`, `email`, `firstname`, `lastname`) VALUES ?";
+    let query = "INSERT INTO `users` (`username`, `email`, `firstname`, `lastname`) VALUES (?)";
     let params = [req.body.username, req.body.email, req.body.firstname, req.body.lastname];
-    console.log(req.body);
-    conn.query(query, params, (err, data) => {
+    console.log(params);
+    conn.query(query, [params], (err, data) => {
         if(err) return res.send(err);
         res.send("Successfully added new user.");
     })
