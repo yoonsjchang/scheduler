@@ -1,10 +1,27 @@
 const routes = require('express').Router();
+const jwt = require('jsonwebtoken');
 const users = require('./users');
 const events = require('./events');
+const login = require('./login');
 
-routes.get('/', (req, res) => {
-    res.send("Testing new");
+const secret = '8h3qouLp9woP67xFO9TM';
+routes.use('/login', login);
+routes.use((req, res, next) => {
+    if(!req.headers.authorization) {
+        return res.status(401).json({error: "Unauthorized"});
+    }
+    try{
+        let decode = jwt.verify(req.headers.authorization.substring(7), secret);
+        console.log("In middle")
+        req.user = decode;
+        console.log(req.user);
+    }
+    catch(err) {
+        return res.status(403).json({error: "Forbidden"});
+    }
+    return next();
 });
+
 routes.use('/users', users);
 routes.use('/events', events);
 

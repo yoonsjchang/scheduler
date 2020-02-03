@@ -1,24 +1,28 @@
 const router = require('express').Router();
-const mysql = require('mysql2');
-const config = require(__dirname + '/../../config');
-const conn = require(__dirname + '/../../mysql');
+const conn = require(__basedir + '/mysql');
 
-router.get('/:id', (req, res) => {
+router.get('/:userId/info', (req, res, next) => {
     let query = "SELECT * FROM `users` WHERE userId = ?";
-    conn.query(query, req.params.id, (err, data) => {
-        if(err) return res.send(err);
-        res.send(data);
+    conn.query(query, req.params.userId, (err, data) => {
+        if(err) return next(err);
+        res.send(data[0]);
+        next();
     })
 });
 
-router.post('/', (req, res) => {
-    let query = "INSERT INTO `users` (`username`, `email`, `firstname`, `lastname`) VALUES (?)";
-    let params = [req.body.username, req.body.email, req.body.firstname, req.body.lastname];
-    console.log(params);
-    conn.query(query, [params], (err, data) => {
-        if(err) return res.send(err);
-        res.send("Successfully added new user.");
+router.get('/info', (req, res, next) => {
+    return res.status(200).json(req.user);
+});
+
+router.delete('/:userId', (req, res, next) => {
+    let query = "DELETE FROM `users` WHERE userId = ?";
+    conn.query(query, req.params.userId, (err, data) => {
+        if(err) return next(err);
+        res.send(data);
+        next();
     })
 });
+
+
 
 module.exports = router;
