@@ -8,16 +8,15 @@ const secret = '8h3qouLp9woP67xFO9TM';
 routes.use('/login', login);
 routes.use((req, res, next) => {
     if(!req.headers.authorization) {
-        return res.status(401).json({error: "Unauthorized"});
+        res.status(401).json({error: "Unauthorized"});
+        return next();
     }
     try{
         let decode = jwt.verify(req.headers.authorization.substring(7), secret);
-        console.log("In middle")
         req.user = decode;
-        console.log(req.user);
     }
     catch(err) {
-        return res.status(403).json({error: "Forbidden"});
+        res.status(403).json({error: "Forbidden"});
     }
     return next();
 });

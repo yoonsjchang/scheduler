@@ -11,7 +11,8 @@ router.get('/:userId/info', (req, res, next) => {
 });
 
 router.get('/info', (req, res, next) => {
-    return res.status(200).json(req.user);
+    res.status(200).json(req.user);
+    return next();
 });
 
 router.delete('/:userId', (req, res, next) => {
@@ -19,7 +20,7 @@ router.delete('/:userId', (req, res, next) => {
     conn.query(query, req.params.userId, (err, data) => {
         if(err) return next(err);
         res.send(data);
-        next();
+        return next();
     })
 });
 
