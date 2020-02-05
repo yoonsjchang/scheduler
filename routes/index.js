@@ -4,24 +4,24 @@ const users = require('./users');
 const events = require('./events');
 const login = require('./login');
 
-const secret = '8h3qouLp9woP67xFO9TM';
+const secret = process.env.AUTH_SECRET;
+
 routes.use('/login', login);
-routes.use((req, res, next) => {
+routes.use('/users', requireJwt, users);
+routes.use('/events', requireJwt, events);
+
+function requireJwt(req, res, next) {
     if(!req.headers.authorization) {
-        res.status(401).json({error: "Unauthorized"});
-        return next();
+        return res.status(401).json({error: "Unauthorized"});
     }
     try{
         let decode = jwt.verify(req.headers.authorization.substring(7), secret);
         req.user = decode;
     }
     catch(err) {
-        res.status(403).json({error: "Forbidden"});
+        return res.status(403).json({error: "Forbidden"});
     }
     return next();
-});
-
-routes.use('/users', users);
-routes.use('/events', events);
+}
 
 module.exports = routes;

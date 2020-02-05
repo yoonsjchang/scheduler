@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const moment = require('moment');
 const conn = require(__basedir + '/mysql');
 
-const secret = '8h3qouLp9woP67xFO9TM';
+const secret = process.env.AUTH_SECRET;
 
 router.post('/register', (req, res, next) => {
     let query = "INSERT INTO `users` (`username`, `email`, `firstname`, `lastname`, `password`) VALUES (?)";
@@ -32,6 +32,7 @@ router.post('/authenticate', (req, res, next) => {
                 email: data[0].email
             }
             json = jwt.sign(json, secret);
+            console.log(json);
             res.status(200).send(json);
         }
         return next();
